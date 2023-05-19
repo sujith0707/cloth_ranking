@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clothing</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Cloth Ranking</h1>
+  <form id="text-form">
+    <label for="text-input">Enter Text:</label>
+    <input type="text" id="text-input" name="text" required>
+    <button type="submit">Search</button>
+  </form>
+
+  <div id="similar-items"></div>
+
+  <script>
+    $(document).ready(function() {
+      $("#text-form").submit(function(event) {
+        event.preventDefault();
+        var text = $("#text-input").val();
+
+        $.ajax({
+          url: "/predict",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ "text": text }),
+          success: function(response) {
+            var similarItems = response.similar_items;
+            var similarItemsHtml = "<h2>Similar Items:</h2><ul>";
+            for (var i = 0; i < similarItems.length; i++) {
+              similarItemsHtml += "<li><a href='" + similarItems[i] + "' target='_blank'>" + similarItems[i] + "</a></li>";
+            }
+            similarItemsHtml += "</ul>";
+            $("#similar-items").html(similarItemsHtml);
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
